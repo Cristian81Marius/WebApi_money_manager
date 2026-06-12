@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" ls-files obj/ bin/)",
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" rm -r --cached bin/ obj/)",
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" add .gitignore NuGet.config WebApi_money_management.csproj)",
+      "Bash(git -C e:/project/WebApi_money_management/WebApi_money_management commit -m ' *)"
+    ]
+  }
+}
