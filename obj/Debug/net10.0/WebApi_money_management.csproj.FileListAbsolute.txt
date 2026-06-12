@@ -130,3 +130,4 @@ E:\project\WebApi_money_management\WebApi_money_management\bin\Debug\net10.0\ru\
 E:\project\WebApi_money_management\WebApi_money_management\bin\Debug\net10.0\tr\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 E:\project\WebApi_money_management\WebApi_money_management\bin\Debug\net10.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
 E:\project\WebApi_money_management\WebApi_money_management\bin\Debug\net10.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.MSBuild.resources.dll
+E:\project\WebApi_money_management\WebApi_money_management\obj\Debug\net10.0\WebApi_money_management.sourcelink.json
