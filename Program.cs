@@ -25,6 +25,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ── Controllers ──────────────────────────────────────────────────────────────
 builder.Services.AddControllers();
+builder.Services.AddMemoryCache();
 
 // Return { error, message } on model-validation failure (consistent with AppException shape)
 builder.Services.Configure<ApiBehaviorOptions>(options =>
