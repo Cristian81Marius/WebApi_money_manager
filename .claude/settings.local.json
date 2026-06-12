@@ -5,7 +5,12 @@
       "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" rm -r --cached bin/ obj/)",
       "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" add .gitignore NuGet.config WebApi_money_management.csproj)",
       "Bash(git -C e:/project/WebApi_money_management/WebApi_money_management commit -m ' *)",
-      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" add WebApi_money_management.csproj)"
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" add WebApi_money_management.csproj)",
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" log --oneline -5)",
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" status)",
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" show --stat 573165e)",
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" show --stat 3c4e93e)",
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" add -A)"
     ]
   }
 }

@@ -9,6 +9,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<RevokedToken> RevokedTokens => Set<RevokedToken>();
     public DbSet<Transaction> Transactions => Set<Transaction>();
     public DbSet<BankStatement> BankStatements => Set<BankStatement>();
+    public DbSet<UserPreference> UserPreferences => Set<UserPreference>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,6 +53,17 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
                 .OnDelete(DeleteBehavior.Cascade);
             e.Property(s => s.Bank).HasMaxLength(50).IsRequired();
             e.Property(s => s.FileName).HasMaxLength(255).IsRequired();
+        });
+
+        modelBuilder.Entity<UserPreference>(e =>
+        {
+            e.HasKey(p => p.UserId);
+            e.HasOne(p => p.User)
+                .WithOne()
+                .HasForeignKey<UserPreference>(p => p.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            e.Property(p => p.Language).HasMaxLength(10).HasDefaultValue("en").IsRequired();
+            e.Property(p => p.Theme).HasMaxLength(20).HasDefaultValue("light").IsRequired();
         });
     }
 }

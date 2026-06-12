@@ -18,6 +18,8 @@ using WebApi_money_management.Services.Dashboard;
 using WebApi_money_management.Services.Statements;
 using WebApi_money_management.Services.Statistics;
 using WebApi_money_management.Services.Transactions;
+using WebApi_money_management.Repositories.UserPreferences;
+using WebApi_money_management.Services.UserPreferences;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -129,6 +131,8 @@ builder.Services.AddScoped<ITransactionRepository, TransactionRepository>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<IStatementRepository, StatementRepository>();
 builder.Services.AddScoped<IStatementService, StatementService>();
+builder.Services.AddScoped<IUserPreferenceRepository, UserPreferenceRepository>();
+builder.Services.AddScoped<IUserPreferenceService, UserPreferenceService>();
 
 // ─────────────────────────────────────────────────────────────────────────────
 var app = builder.Build();
