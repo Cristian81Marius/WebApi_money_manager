@@ -5,7 +5,9 @@ namespace WebApi_money_management.ExternalApis.StatementAnalysis;
 public interface IStatementAnalysisClient
 {
     Task<StatementAnalysisResponse> AnalyzeAsync(
-        byte[] pdfBytes,
+        byte[] fileBytes,
+        string fileName,
+        string contentType,
         string? bankName,
         DateOnly startDate,
         DateOnly endDate,

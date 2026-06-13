@@ -8,7 +8,9 @@ namespace WebApi_money_management.ExternalApis.StatementAnalysis;
 public class StatementAnalysisClient(HttpClient httpClient) : IStatementAnalysisClient
 {
     public async Task<StatementAnalysisResponse> AnalyzeAsync(
-        byte[] pdfBytes,
+        byte[] fileBytes,
+        string fileName,
+        string contentType,
         string? bankName,
         DateOnly startDate,
         DateOnly endDate,
@@ -16,9 +18,9 @@ public class StatementAnalysisClient(HttpClient httpClient) : IStatementAnalysis
     {
         using var form = new MultipartFormDataContent();
 
-        var fileContent = new ByteArrayContent(pdfBytes);
-        fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
-        form.Add(fileContent, "file", "statement.pdf");
+        var fileContent = new ByteArrayContent(fileBytes);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+        form.Add(fileContent, "file", fileName);
 
         if (bankName is not null)
             form.Add(new StringContent(bankName), "bank_name");

@@ -18,6 +18,9 @@ public class StatementService(
     private static readonly HashSet<string> SupportedBanks =
         ["BCR", "BRD", "ING", "Raiffeisen", "BT", "UniCredit", "CEC", "Other"];
 
+    private static readonly HashSet<string> SupportedMimeTypes =
+        ["application/pdf", "text/csv", "application/csv"];
+
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;
 
     public async Task<UploadStatementResponse> UploadAsync(
@@ -29,6 +32,9 @@ public class StatementService(
 
         if (file.Length > MaxFileSizeBytes)
             throw new FileTooLargeException();
+
+        if (!SupportedMimeTypes.Contains(file.ContentType))
+            throw new UnsupportedFormatException();
 
         DateOnly? from = null, to = null;
 
@@ -49,9 +55,7 @@ public class StatementService(
         if (from.HasValue && to.HasValue && from > to)
             throw new ValidationException("startDate must not be after endDate.");
 
-        var imported = file.ContentType.Equals("application/pdf", StringComparison.OrdinalIgnoreCase)
-            ? await AnalyzePdfAsync(userId, bank, file, from, to)
-            : await ParseCsvAsync(userId, file, from, to);
+        var imported = await AnalyzeFileAsync(userId, bank, file, from, to);
 
         var statement = await statementRepository.CreateAsync(new BankStatement
         {
@@ -64,7 +68,7 @@ public class StatementService(
         return new UploadStatementResponse(statement.Id, statement.Bank, statement.ImportedCount);
     }
 
-    private async Task<int> AnalyzePdfAsync(
+    private async Task<int> AnalyzeFileAsync(
         Guid userId, string bank, IFormFile file, DateOnly? from, DateOnly? to)
     {
         byte[] bytes;
@@ -83,6 +87,8 @@ public class StatementService(
 
         var result = await analysisClient.AnalyzeAsync(
             bytes,
+            file.FileName,
+            file.ContentType,
             bank == "Other" ? null : bank,
             start,
             end,
@@ -99,55 +105,6 @@ public class StatementService(
                 Category    = t.CategoryName
             })
             .ToList();
-
-        foreach (var t in transactions)
-            await transactionRepository.CreateAsync(t);
-
-        return transactions.Count;
-    }
-
-    private async Task<int> ParseCsvAsync(Guid userId, IFormFile file, DateOnly? from, DateOnly? to)
-    {
-        if (!file.ContentType.Equals("text/csv", StringComparison.OrdinalIgnoreCase))
-            throw new UnsupportedFormatException();
-
-        var transactions = new List<Transaction>();
-
-        using var reader = new StreamReader(file.OpenReadStream());
-        var header = await reader.ReadLineAsync();
-        if (header is null) return 0;
-
-        var columns   = header.Split(',');
-        int dateCol   = Array.FindIndex(columns, c => c.Trim().Equals("date",        StringComparison.OrdinalIgnoreCase));
-        int amountCol = Array.FindIndex(columns, c => c.Trim().Equals("amount",      StringComparison.OrdinalIgnoreCase));
-        int typeCol   = Array.FindIndex(columns, c => c.Trim().Equals("type",        StringComparison.OrdinalIgnoreCase));
-        int descCol   = Array.FindIndex(columns, c => c.Trim().Equals("description", StringComparison.OrdinalIgnoreCase));
-        int catCol    = Array.FindIndex(columns, c => c.Trim().Equals("category",    StringComparison.OrdinalIgnoreCase));
-
-        if (dateCol < 0 || amountCol < 0) return 0;
-
-        string? line;
-        while ((line = await reader.ReadLineAsync()) is not null)
-        {
-            var fields = line.Split(',');
-            if (fields.Length <= Math.Max(dateCol, amountCol)) continue;
-
-            if (!DateOnly.TryParse(fields[dateCol].Trim(), out var date)) continue;
-            if (!decimal.TryParse(fields[amountCol].Trim(), out var amount)) continue;
-            if (amount <= 0) continue;
-            if (from.HasValue && date < from) continue;
-            if (to.HasValue   && date > to)   continue;
-
-            transactions.Add(new Transaction
-            {
-                UserId      = userId,
-                Type        = typeCol >= 0 && fields.Length > typeCol ? fields[typeCol].Trim() : "expense",
-                Description = descCol >= 0 && fields.Length > descCol ? fields[descCol].Trim() : "Imported",
-                Amount      = Math.Abs(amount),
-                Date        = date,
-                Category    = catCol  >= 0 && fields.Length > catCol  ? fields[catCol].Trim()  : "Other"
-            });
-        }
 
         foreach (var t in transactions)
             await transactionRepository.CreateAsync(t);
