@@ -20,6 +20,7 @@ using WebApi_money_management.Services.Statistics;
 using WebApi_money_management.Services.Transactions;
 using WebApi_money_management.Repositories.UserPreferences;
 using WebApi_money_management.Services.UserPreferences;
+using WebApi_money_management.ExternalApis.StatementAnalysis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -134,6 +135,13 @@ builder.Services.AddScoped<IStatementRepository, StatementRepository>();
 builder.Services.AddScoped<IStatementService, StatementService>();
 builder.Services.AddScoped<IUserPreferenceRepository, UserPreferenceRepository>();
 builder.Services.AddScoped<IUserPreferenceService, UserPreferenceService>();
+
+// ── External APIs ─────────────────────────────────────────────────────────────
+builder.Services.AddHttpClient<IStatementAnalysisClient, StatementAnalysisClient>(client =>
+{
+    var baseUrl = builder.Configuration["StatementAnalysis:BaseUrl"] ?? "http://localhost:8000";
+    client.BaseAddress = new Uri(baseUrl);
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
 var app = builder.Build();

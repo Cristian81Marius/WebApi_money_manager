@@ -10,7 +10,8 @@
       "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" status)",
       "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" show --stat 573165e)",
       "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" show --stat 3c4e93e)",
-      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" add -A)"
+      "Bash(git -C \"e:/project/WebApi_money_management/WebApi_money_management\" add -A)",
+      "PowerShell(cd \"e:\\\\project\\\\WebApi_money_management\\\\WebApi_money_management\" && dotnet build 2>&1 | Select-String \"error\" | Where-Object { $_ -notmatch \"MSB3026|MSB3027|MSB3021\" })"
     ]
   }
 }
