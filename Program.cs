@@ -137,10 +137,15 @@ builder.Services.AddScoped<IUserPreferenceRepository, UserPreferenceRepository>(
 builder.Services.AddScoped<IUserPreferenceService, UserPreferenceService>();
 
 // ── External APIs ─────────────────────────────────────────────────────────────
+var analysisApiKey = builder.Configuration["StatementAnalysis:ApiKey"];
+if (string.IsNullOrWhiteSpace(analysisApiKey))
+    throw new InvalidOperationException("StatementAnalysis:ApiKey is not configured.");
+
 builder.Services.AddHttpClient<IStatementAnalysisClient, StatementAnalysisClient>(client =>
 {
     var baseUrl = builder.Configuration["StatementAnalysis:BaseUrl"] ?? "http://localhost:8000";
     client.BaseAddress = new Uri(baseUrl);
+    client.DefaultRequestHeaders.Add("X-API-Key", analysisApiKey);
 });
 
 // ─────────────────────────────────────────────────────────────────────────────

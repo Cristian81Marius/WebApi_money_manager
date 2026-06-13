@@ -36,6 +36,7 @@ public class StatementAnalysisClient(HttpClient httpClient) : IStatementAnalysis
             throw (int)response.StatusCode switch
             {
                 400 => new InvalidDocumentException(),
+                401 => new StatementAnalysisAuthException(),
                 413 => new FileTooLargeException(),
                 415 => new UnsupportedFormatException(),
                 422 => new ValidationException("Invalid or missing request fields."),
